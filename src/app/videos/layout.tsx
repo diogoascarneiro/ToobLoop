@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "TuubLuup - Watch Multiple Videos",
-  description: "Watch multiple YouTube videos simultaneously with TuubLuup.",
+  title: "TuubLuup - Be the Youtube VJ you want to see in your life",
+  description: "Experiment with multiple Youtube players in a single screen",
 };
 
 export default function VideosLayout({

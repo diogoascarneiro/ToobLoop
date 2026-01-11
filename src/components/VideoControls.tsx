@@ -24,6 +24,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
   const [videoTitle, setVideoTitle] = useState<string>("");
   const [videoDuration, setVideoDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [loopSettings, setLoopSettings] = useState<LoopSettings>({
     enabled: false,
     startTime: 0,
@@ -31,6 +32,11 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
   });
 
   const playbackRates = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+
+  // Reset loading state when video ID changes
+  useEffect(() => {
+    setIsLoading(true);
+  }, [videoId]);
 
   const onReady = (event: YouTubeEvent) => {
     setPlayer(event.target);
@@ -58,6 +64,9 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
       ...prev,
       endTime: duration,
     }));
+
+    // Mark as loaded once we have all the data
+    setIsLoading(false);
   };
 
   // Update current time periodically
@@ -390,7 +399,13 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
           />
         </div>
 
-        <div className="w-full">
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
+            <p className="text-gray-400">Loading video...</p>
+          </div>
+        ) : (
+          <div className="w-full">
           <div className="mb-4">
             <div className="flex flex-col gap-2">
               <div className="bg-gray-700 p-3 rounded">
@@ -608,6 +623,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
             </form>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

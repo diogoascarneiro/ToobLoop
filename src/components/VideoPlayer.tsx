@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import YouTube, { YouTubePlayer } from "react-youtube";
 
 interface VideoPlayerProps {
@@ -26,6 +26,8 @@ interface LoopSettings {
 
 const VideoPlayer = ({ videoId, index }: VideoPlayerProps) => {
   const [player, setPlayer] = useState<YouTubePlayer | null>(null);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [pendingCommands, setPendingCommands] = useState<Array<{ type: string; data: any }>>([]);
   const [loopSettings, setLoopSettings] = useState<LoopSettings>({
     enabled: false,
     startTime: 0,
@@ -34,7 +36,56 @@ const VideoPlayer = ({ videoId, index }: VideoPlayerProps) => {
 
   const onReady = (event: { target: YouTubePlayer }) => {
     setPlayer(event.target);
+    setIsPlayerReady(true);
   };
+
+  // Reset ready state when video ID changes
+  useEffect(() => {
+    setIsPlayerReady(false);
+    setPendingCommands([]);
+  }, [videoId]);
+
+  // Function to execute a command
+  const executeCommand = useCallback(
+    (type: string, data: any) => {
+      if (!player) return;
+
+      switch (type) {
+        case "VIDEO_PLAY":
+          player.playVideo();
+          break;
+        case "VIDEO_PAUSE":
+          player.pauseVideo();
+          break;
+        case "VIDEO_SPEED":
+          if (typeof data.speed === "number") {
+            player.setPlaybackRate(data.speed);
+          }
+          break;
+        case "VIDEO_LOOP_SETTINGS":
+          if (typeof data.loopSettings === "object") {
+            setLoopSettings(data.loopSettings);
+          }
+          break;
+        case "VIDEO_SEEK":
+          if (typeof data.time === "number") {
+            player.seekTo(data.time, true);
+          }
+          break;
+      }
+    },
+    [player]
+  );
+
+  // Execute pending commands when player becomes ready
+  useEffect(() => {
+    if (isPlayerReady && player && pendingCommands.length > 0) {
+      pendingCommands.forEach((command) => {
+        executeCommand(command.type, command.data);
+      });
+      setPendingCommands([]);
+    }
+  }, [isPlayerReady, player, pendingCommands, executeCommand]);
 
   // Handle video state changes
   const onStateChange = (event: { target: YouTubePlayer; data: number }) => {
@@ -77,32 +128,16 @@ const VideoPlayer = ({ videoId, index }: VideoPlayerProps) => {
   useEffect(() => {
     // Listen for messages from the controls window
     const handleMessage = (event: MessageEvent) => {
-      if (!player || !event.data || typeof event.data !== "object" || event.data.index !== index) {
+      if (!event.data || typeof event.data !== "object" || event.data.index !== index) {
         return;
       }
 
-      switch (event.data.type) {
-        case "VIDEO_PLAY":
-          player.playVideo();
-          break;
-        case "VIDEO_PAUSE":
-          player.pauseVideo();
-          break;
-        case "VIDEO_SPEED":
-          if (typeof event.data.speed === "number") {
-            player.setPlaybackRate(event.data.speed);
-          }
-          break;
-        case "VIDEO_LOOP_SETTINGS":
-          if (typeof event.data.loopSettings === "object") {
-            setLoopSettings(event.data.loopSettings);
-          }
-          break;
-        case "VIDEO_SEEK":
-          if (typeof event.data.time === "number") {
-            player.seekTo(event.data.time, true);
-          }
-          break;
+      // If player is ready, execute command immediately
+      if (isPlayerReady && player) {
+        executeCommand(event.data.type, event.data);
+      } else {
+        // Otherwise, queue the command for later execution
+        setPendingCommands((prev) => [...prev, { type: event.data.type, data: event.data }]);
       }
     };
 
@@ -111,7 +146,7 @@ const VideoPlayer = ({ videoId, index }: VideoPlayerProps) => {
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, [player, index]);
+  }, [player, index, isPlayerReady, executeCommand]);
 
   const opts: Options = {
     height: "100%",
@@ -136,12 +171,6 @@ const VideoPlayer = ({ videoId, index }: VideoPlayerProps) => {
         />
         {/* Transparent overlay to prevent direct interaction with the video */}
         <div className="absolute inset-0 z-10" />
-        <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded z-20">Video {index + 1}</div>
-        {loopSettings.enabled && (
-          <div className="absolute bottom-2 right-2 bg-purple-600/70 text-white px-2 py-1 rounded text-xs z-20">
-            Loop: {Math.floor(loopSettings.startTime)}s → {Math.floor(loopSettings.endTime)}s
-          </div>
-        )}
       </div>
     </div>
   );
