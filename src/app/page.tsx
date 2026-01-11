@@ -14,7 +14,7 @@ export default function StartPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
       <div className="max-w-2xl w-full bg-gray-800 rounded-lg shadow-xl p-8">
-        <h1 className="text-4xl font-bold text-center mb-4">TuubLuup</h1>
+        <h1 className="text-4xl font-bold text-center mb-4">T∞bL∞p</h1>
         <h2 className="text-xl text-purple-400 text-center mb-6">Visual Mixing & Sound Exploration</h2>
 
         <p className="text-lg text-gray-300 mb-6 text-center">
@@ -61,13 +61,13 @@ export default function StartPage() {
           <button
             onClick={handleStartApp}
             className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors">
-            Launch Visual Canvas
+            Launch T∞bL∞p
           </button>
         </div>
 
         <div className="mt-8 text-center text-xs text-gray-500">
           <p>
-            © 2025 Diogo Carneiro. TuubLuup is licensed under{" "}
+            © 2025 Diogo Carneiro. T∞bL∞p is licensed under{" "}
             <a
               href="https://creativecommons.org/licenses/by-nc/4.0/"
               target="_blank"

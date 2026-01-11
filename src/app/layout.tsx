@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TuubLuup - Visual Mixing & Sound Exploration",
+  title: "T∞bL∞p - Visual Mixing & Sound Exploration",
   description:
-    "TuubLuup is a tool for VJs and sound artists to create immersive audiovisual experiences using YouTube videos as source material.",
+    "T∞bL∞p is a tool for VJs and sound artists to create immersive audiovisual experiences using YouTube videos as source material.",
 };
 
 export default function RootLayout({

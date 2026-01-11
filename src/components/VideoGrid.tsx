@@ -4,7 +4,7 @@ import VideoPlayer from "./VideoPlayer";
 
 // Default video IDs (you can replace these with any YouTube video IDs)
 const DEFAULT_VIDEOS = [
-  "GACNpJfzyjs", // Visual music/VJ loop 1
+  "jOCNmimkFTs", // Funky Drummer - Slot 1
   "J7VNYIf39u0", // Visual music/VJ loop 2
   "cd4-UnU8lWY", // Visual music/VJ loop 3
   "rYoZgpAEkFs", // Visual music/VJ loop 4
@@ -25,12 +25,14 @@ const Header = ({
   openControlsWindow,
   onMouseEnter,
   onMouseLeave,
+  onBackClick,
 }: {
   isVisible: boolean;
   videoCount: number;
   openControlsWindow: () => void;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
+  onBackClick: () => void;
 }) => {
   return (
     <header
@@ -42,6 +44,7 @@ const Header = ({
       <div className="flex items-center gap-3">
         <Link
           href="/"
+          onClick={onBackClick}
           className="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded flex items-center"
           title="Back to start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -52,7 +55,7 @@ const Header = ({
             />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold">TuubLuup</h1>
+        <h1 className="text-2xl font-bold">T∞bL∞p</h1>
       </div>
       <div className="flex items-center gap-2">
         <span className="text-gray-300">Watching {videoCount} videos</span>
@@ -224,6 +227,13 @@ const VideoGrid = ({ videoCount = 6 }: VideoGridProps) => {
     setIsHeaderVisible(false);
   };
 
+  const handleBackClick = () => {
+    // Close the controls window when navigating back
+    if (controlsWindow && !controlsWindow.closed) {
+      controlsWindow.close();
+    }
+  };
+
   return (
     <div className="h-screen w-full overflow-hidden bg-black">
       <Header
@@ -232,6 +242,7 @@ const VideoGrid = ({ videoCount = 6 }: VideoGridProps) => {
         openControlsWindow={openControlsWindow}
         onMouseEnter={handleHeaderMouseEnter}
         onMouseLeave={handleHeaderMouseLeave}
+        onBackClick={handleBackClick}
       />
 
       <div className={`grid ${getGridColumns()} ${getGridRows()} gap-2 h-full w-full`}>

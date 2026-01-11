@@ -1,8 +1,8 @@
-# TuubLuup
+# T∞bL∞p
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
-A Next.js application designed for VJs and sound artists to create immersive audiovisual experiences using YouTube videos as source material. TuubLuup allows you to display multiple YouTube videos simultaneously, creating a dynamic visual canvas for live performances, installations, or experimental sound exploration.
+A Next.js application designed for VJs and sound artists to create immersive audiovisual experiences using YouTube videos as source material. T∞bL∞p allows you to display multiple YouTube videos simultaneously, creating a dynamic visual canvas for live performances, installations, or experimental sound exploration.
 
 ## Features
 
@@ -81,7 +81,7 @@ A Next.js application designed for VJs and sound artists to create immersive aud
 
 ### Video Looping
 
-TuubLuup offers advanced video looping capabilities:
+T∞bL∞p offers advanced video looping capabilities:
 
 - **Interactive Progress Bar**: Click anywhere on the progress bar to jump to that point in the video
 - **Visual Loop Region**: The active loop region is highlighted in purple on the progress bar

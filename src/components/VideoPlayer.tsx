@@ -92,38 +92,59 @@ const VideoPlayer = ({ videoId, index }: VideoPlayerProps) => {
     // YouTube player states: -1 (unstarted), 0 (ended), 1 (playing), 2 (paused), 3 (buffering), 5 (video cued)
     if (event.data === 0) {
       // Video ended
-      // Send message to controls window that video has ended
-      if (typeof window !== "undefined") {
-        window.dispatchEvent(
-          new MessageEvent("message", {
-            data: {
-              type: "VIDEO_ENDED",
-              index,
-            },
-          })
-        );
+      if (loopSettings.enabled) {
+        // If looping is enabled, restart from loop start point
+        event.target.seekTo(loopSettings.startTime, true);
+        event.target.playVideo();
+      } else {
+        // Send message to controls window that video has ended
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new MessageEvent("message", {
+              data: {
+                type: "VIDEO_ENDED",
+                index,
+              },
+            })
+          );
+        }
       }
     }
   };
 
-  // Check if video needs to loop
+  // Check if video needs to loop and send time updates
   useEffect(() => {
-    if (!player || !loopSettings.enabled) return;
+    if (!player) return;
 
     const checkTime = () => {
       const currentTime = player.getCurrentTime();
-      if (currentTime >= loopSettings.endTime) {
+
+      // Send current time to controls window
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new MessageEvent("message", {
+            data: {
+              type: "VIDEO_TIME_UPDATE",
+              index,
+              currentTime,
+            },
+          })
+        );
+      }
+
+      // Check if we need to loop
+      if (loopSettings.enabled && currentTime >= loopSettings.endTime) {
         player.seekTo(loopSettings.startTime, true);
       }
     };
 
-    // Check every 200ms if we need to loop
+    // Check every 200ms
     const intervalId = setInterval(checkTime, 200);
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [player, loopSettings]);
+  }, [player, loopSettings, index]);
 
   useEffect(() => {
     // Listen for messages from the controls window

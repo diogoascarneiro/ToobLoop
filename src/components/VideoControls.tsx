@@ -69,31 +69,24 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
     setIsLoading(false);
   };
 
-  // Update current time periodically
+  // Listen for time updates from the main window
   useEffect(() => {
-    if (!player) return;
-
-    const interval = setInterval(() => {
-      const rawTime = player.getCurrentTime();
-
-      // If looping is enabled, adjust the displayed time to show position within the loop
-      if (loopSettings.enabled && rawTime >= loopSettings.startTime) {
-        // Calculate relative position within the loop
-        const loopDuration = loopSettings.endTime - loopSettings.startTime;
-        if (loopDuration > 0) {
-          // When we're in the loop region, show time relative to loop start
-          const relativeTime = ((rawTime - loopSettings.startTime) % loopDuration) + loopSettings.startTime;
-          setCurrentTime(relativeTime);
-        } else {
-          setCurrentTime(rawTime);
-        }
-      } else {
-        setCurrentTime(rawTime);
+    const handleMessage = (event: MessageEvent) => {
+      if (!event.data || typeof event.data !== "object" || event.data.index !== index) {
+        return;
       }
-    }, 200);
 
-    return () => clearInterval(interval);
-  }, [player, loopSettings]);
+      if (event.data.type === "VIDEO_TIME_UPDATE" && typeof event.data.currentTime === "number") {
+        setCurrentTime(event.data.currentTime);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, [index]);
 
   // Listen for messages from the main window
   useEffect(() => {
@@ -277,32 +270,8 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
     alert("Using predefined videos as fallback. YouTube search API may be unavailable.");
   };
 
-  // Set current time as loop start point
-  const setLoopStart = () => {
-    if (!player) return;
-
-    const time = player.getCurrentTime();
-    updateLoopSettings({
-      ...loopSettings,
-      startTime: time,
-      enabled: true,
-    });
-  };
-
-  // Set current time as loop end point
-  const setLoopEnd = () => {
-    if (!player) return;
-
-    const time = player.getCurrentTime();
-    updateLoopSettings({
-      ...loopSettings,
-      endTime: time,
-      enabled: true,
-    });
-  };
-
   // Update loop settings and send to main window
-  const updateLoopSettings = (newSettings: LoopSettings) => {
+  const updateLoopSettings = (newSettings: LoopSettings, startChanged: boolean = false, endChanged: boolean = false) => {
     // Ensure start time is before end time
     if (newSettings.startTime >= newSettings.endTime) {
       if (newSettings.startTime > loopSettings.startTime) {
@@ -316,6 +285,16 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
 
     setLoopSettings(newSettings);
     sendMessageToParent("VIDEO_LOOP_SETTINGS", { loopSettings: newSettings });
+
+    // If loop start was changed, jump to the new loop start
+    if (startChanged) {
+      seekTo(newSettings.startTime);
+    }
+
+    // If loop end was changed and current time is beyond the new end point, jump to loop start
+    if (endChanged && currentTime > newSettings.endTime) {
+      seekTo(newSettings.startTime);
+    }
   };
 
   // Toggle loop on/off
@@ -336,7 +315,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
       ...loopSettings,
       startTime: newStartTime,
       enabled: true,
-    });
+    }, true, false);
   };
 
   // Handle slider change for end time
@@ -346,7 +325,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
       ...loopSettings,
       endTime: newEndTime,
       enabled: true,
-    });
+    }, false, true);
   };
 
   // Seek to a specific time
@@ -537,6 +516,30 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                 <div className="mt-4 mb-2">
                   <div className="flex items-center mb-2">
                     <span className="text-sm w-16">Start: </span>
+                    <button
+                      onClick={() => {
+                        const newTime = Math.max(0, loopSettings.startTime - 1);
+                        updateLoopSettings({
+                          ...loopSettings,
+                          startTime: newTime,
+                          enabled: true,
+                        }, true, false);
+                      }}
+                      className="ml-2 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      -1s
+                    </button>
+                    <button
+                      onClick={() => {
+                        const newTime = Math.max(0, loopSettings.startTime - 0.1);
+                        updateLoopSettings({
+                          ...loopSettings,
+                          startTime: newTime,
+                          enabled: true,
+                        }, true, false);
+                      }}
+                      className="ml-1 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      -0.1s
+                    </button>
                     <input
                       type="range"
                       min="0"
@@ -544,18 +547,61 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                       step="0.1"
                       value={loopSettings.startTime}
                       onChange={handleStartSliderChange}
-                      className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                      className="flex-grow mx-2 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                     />
-                    <span className="text-sm ml-2 w-16">{formatTime(loopSettings.startTime)}</span>
                     <button
-                      onClick={setLoopStart}
-                      className="ml-2 bg-green-600 hover:bg-green-700 px-2 py-1 rounded text-xs">
-                      Set
+                      onClick={() => {
+                        const newTime = Math.min(loopSettings.endTime - 0.1, loopSettings.startTime + 0.1);
+                        updateLoopSettings({
+                          ...loopSettings,
+                          startTime: newTime,
+                          enabled: true,
+                        }, true, false);
+                      }}
+                      className="mr-1 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      +0.1s
                     </button>
+                    <button
+                      onClick={() => {
+                        const newTime = Math.min(loopSettings.endTime - 1, loopSettings.startTime + 1);
+                        updateLoopSettings({
+                          ...loopSettings,
+                          startTime: newTime,
+                          enabled: true,
+                        }, true, false);
+                      }}
+                      className="mr-2 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      +1s
+                    </button>
+                    <span className="text-sm w-16">{formatTime(loopSettings.startTime)}</span>
                   </div>
 
                   <div className="flex items-center">
                     <span className="text-sm w-16">End: </span>
+                    <button
+                      onClick={() => {
+                        const newTime = Math.max(loopSettings.startTime + 1, loopSettings.endTime - 1);
+                        updateLoopSettings({
+                          ...loopSettings,
+                          endTime: newTime,
+                          enabled: true,
+                        }, false, true);
+                      }}
+                      className="ml-2 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      -1s
+                    </button>
+                    <button
+                      onClick={() => {
+                        const newTime = Math.max(loopSettings.startTime + 0.1, loopSettings.endTime - 0.1);
+                        updateLoopSettings({
+                          ...loopSettings,
+                          endTime: newTime,
+                          enabled: true,
+                        }, false, true);
+                      }}
+                      className="ml-1 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      -0.1s
+                    </button>
                     <input
                       type="range"
                       min="0"
@@ -563,12 +609,33 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                       step="0.1"
                       value={loopSettings.endTime}
                       onChange={handleEndSliderChange}
-                      className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                      className="flex-grow mx-2 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
                     />
-                    <span className="text-sm ml-2 w-16">{formatTime(loopSettings.endTime)}</span>
-                    <button onClick={setLoopEnd} className="ml-2 bg-red-600 hover:bg-red-700 px-2 py-1 rounded text-xs">
-                      Set
+                    <button
+                      onClick={() => {
+                        const newTime = Math.min(videoDuration, loopSettings.endTime + 0.1);
+                        updateLoopSettings({
+                          ...loopSettings,
+                          endTime: newTime,
+                          enabled: true,
+                        }, false, true);
+                      }}
+                      className="mr-1 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      +0.1s
                     </button>
+                    <button
+                      onClick={() => {
+                        const newTime = Math.min(videoDuration, loopSettings.endTime + 1);
+                        updateLoopSettings({
+                          ...loopSettings,
+                          endTime: newTime,
+                          enabled: true,
+                        }, false, true);
+                      }}
+                      className="mr-2 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      +1s
+                    </button>
+                    <span className="text-sm w-16">{formatTime(loopSettings.endTime)}</span>
                   </div>
                 </div>
 
@@ -595,7 +662,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                 />
                 <button
                   type="submit"
-                  className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded whitespace-nowrap"
+                  className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded whitespace-nowrap disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={!newVideoUrl.trim()}>
                   Change
                 </button>
@@ -615,7 +682,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                 />
                 <button
                   type="submit"
-                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded whitespace-nowrap"
+                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded whitespace-nowrap disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isSearching || !searchKeyword.trim()}>
                   {isSearching ? "Searching..." : "Random"}
                 </button>

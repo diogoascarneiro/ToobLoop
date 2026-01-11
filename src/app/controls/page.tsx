@@ -62,7 +62,7 @@ export default function ControlsPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-4">
-      <h1 className="text-2xl font-bold mb-6">TuubLuup Controls</h1>
+      <h1 className="text-2xl font-bold mb-6">T∞bL∞p Controls</h1>
       <p className="mb-4 text-gray-300">
         Control all videos from this window. Changes will be reflected in the main window.
       </p>
