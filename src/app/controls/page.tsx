@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import VideoControls from "../../components/VideoControls";
 
-export default function ControlsPage() {
+function ControlsContent() {
   const searchParams = useSearchParams();
   const [videoIds, setVideoIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,10 +39,10 @@ export default function ControlsPage() {
 
   if (videoIds.length === 0) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-900">
-        <div className="bg-gray-800 border border-gray-700 text-white px-6 py-5 rounded-lg max-w-md text-center">
-          <h2 className="text-xl font-semibold mb-3">No Videos Found</h2>
-          <p className="text-gray-300 mb-4">No videos were detected. Please return to the main page and try again.</p>
+      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-dark-surface to-dark-panel">
+        <div className="bg-dark-bg border border-dark-surface text-white px-6 py-5 rounded-lg max-w-md text-center">
+          <h2 className="text-xl font-semibold mb-3 text-primary-hover">No Videos Found</h2>
+          <p className="text-accent-lilac mb-4">No videos were detected. Please return to the main page and try again.</p>
           <button
             onClick={() => {
               if (typeof window !== "undefined") {
@@ -52,7 +52,7 @@ export default function ControlsPage() {
                 window.close();
               }
             }}
-            className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">
+            className="bg-primary hover:bg-primary-hover px-4 py-2 rounded transition-colors">
             Return to Start
           </button>
         </div>
@@ -123,5 +123,13 @@ export default function ControlsPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function ControlsPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-screen bg-gradient-to-br from-dark-surface to-dark-panel text-white">Loading...</div>}>
+      <ControlsContent />
+    </Suspense>
   );
 }

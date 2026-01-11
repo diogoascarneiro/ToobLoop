@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import VideoGrid from "../../components/VideoGrid";
 
-export default function VideosPage() {
+function VideosContent() {
   const searchParams = useSearchParams();
   const [videoCount, setVideoCount] = useState<number>(6);
 
@@ -19,4 +19,12 @@ export default function VideosPage() {
   }, [searchParams]);
 
   return <VideoGrid videoCount={videoCount} />;
+}
+
+export default function VideosPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-screen bg-gradient-to-br from-dark-surface to-dark-panel text-white">Loading...</div>}>
+      <VideosContent />
+    </Suspense>
+  );
 }
