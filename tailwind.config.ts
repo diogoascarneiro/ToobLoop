@@ -9,8 +9,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        // T∞bL∞p Brand Colors
+        primary: {
+          DEFAULT: '#8F7CFF', // Primary Purple
+          hover: '#C6B7FF',   // Soft Lavender
+        },
+        secondary: {
+          DEFAULT: '#6A6FD9', // Cool Blue-Purple
+          hover: '#8F7CFF',
+        },
+        accent: {
+          pink: '#F2B6E8',      // Pastel Pink
+          lilac: '#E6DFFF',     // Light Lilac
+          highlight: '#F5C3EE', // Soft Pink Highlight
+        },
+        dark: {
+          bg: '#090617',      // Primary Background (matches logo)
+          surface: '#14172B', // Secondary Dark Surface
+          panel: '#1A1D2E',   // Tertiary panel color
+        },
       },
     },
   },

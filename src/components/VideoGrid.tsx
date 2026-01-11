@@ -36,7 +36,7 @@ const Header = ({
 }) => {
   return (
     <header
-      className={`bg-gray-900 text-white p-4 flex justify-between items-center fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`bg-dark-surface text-white p-4 flex justify-between items-center fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform -translate-y-full pointer-events-none"
       }`}
       onMouseEnter={onMouseEnter}
@@ -45,7 +45,7 @@ const Header = ({
         <Link
           href="/"
           onClick={onBackClick}
-          className="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded flex items-center"
+          className="bg-accent-lilac hover:bg-primary-hover text-dark-bg px-3 py-2 rounded flex items-center transition-colors"
           title="Back to start">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -55,11 +55,13 @@ const Header = ({
             />
           </svg>
         </Link>
-        <h1 className="text-2xl font-bold">T∞bL∞p</h1>
+        <h1 className="text-2xl font-bold text-primary-hover">T∞bL∞p</h1>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-gray-300">Watching {videoCount} videos</span>
-        <button onClick={openControlsWindow} className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">
+        <span className="text-accent-lilac">Watching {videoCount} videos</span>
+        <button
+          onClick={openControlsWindow}
+          className="bg-primary hover:bg-primary-hover px-4 py-2 rounded transition-colors">
           Open Controls
         </button>
       </div>

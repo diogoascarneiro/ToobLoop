@@ -61,25 +61,25 @@ export default function ControlsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
-      <h1 className="text-2xl font-bold mb-6">T∞bL∞p Controls</h1>
-      <p className="mb-4 text-gray-300">
+    <div className="min-h-screen bg-gradient-to-br from-dark-surface to-dark-panel text-white p-4">
+      <h1 className="text-2xl font-bold mb-6 text-primary-hover">T∞bL∞p Controls</h1>
+      <p className="mb-4 text-accent-lilac">
         Control all videos from this window. Changes will be reflected in the main window.
       </p>
 
       {/* Tabs Navigation */}
-      <div className="flex border-b border-gray-700 mb-4 overflow-x-auto">
+      <div className="flex border-b border-dark-surface mb-4 overflow-x-auto">
         {videoIds.map((_, index) => (
           <button
             key={index}
             className={`px-4 py-2 font-medium truncate max-w-xs ${
               activeTab === index
-                ? "text-white border-b-2 border-purple-500 bg-gray-800"
-                : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                ? "text-white border-b-2 border-primary bg-dark-surface"
+                : "text-accent-lilac hover:text-white hover:bg-dark-surface/50"
             }`}
             onClick={() => setActiveTab(index)}
             title={videoTitles[index]}>
-            <span className="inline-block w-6 h-6 text-sm rounded-full bg-purple-600 mr-2 text-center">
+            <span className="inline-block w-6 h-6 text-sm rounded-full bg-primary mr-2 text-center">
               {index + 1}
             </span>
             {videoTitles[index]}
@@ -118,7 +118,7 @@ export default function ControlsPage() {
       </div>
 
       <div className="mt-6 flex justify-center">
-        <button onClick={() => window.close()} className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">
+        <button onClick={() => window.close()} className="bg-secondary hover:bg-secondary-hover px-4 py-2 rounded transition-colors">
           Close Controls
         </button>
       </div>

@@ -353,8 +353,8 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
   };
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg">
-      <h2 className="text-xl font-semibold mb-3">Video {index + 1}</h2>
+    <div className="bg-dark-surface p-4 rounded-lg">
+      <h2 className="text-xl font-semibold mb-3 text-primary-hover">Video {index + 1}</h2>
 
       <div className="flex flex-col gap-4">
         {/* Hidden YouTube player to control the video and get metadata */}
@@ -380,25 +380,25 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-            <p className="text-gray-400">Loading video...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+            <p className="text-accent-lilac">Loading video...</p>
           </div>
         ) : (
           <div className="w-full">
           <div className="mb-4">
             <div className="flex flex-col gap-2">
-              <div className="bg-gray-700 p-3 rounded">
-                <p className="font-medium">Title: {videoTitle || "Loading..."}</p>
-                <p className="text-sm text-gray-300 mt-1">Status: {isPlaying ? "Playing" : "Paused"}</p>
-                <p className="text-sm text-gray-300">Speed: {playbackRate}x</p>
-                <p className="text-sm text-gray-300">
+              <div className="bg-dark-panel p-3 rounded">
+                <p className="font-medium text-accent-lilac">Title: {videoTitle || "Loading..."}</p>
+                <p className="text-sm text-primary-hover mt-1">Status: {isPlaying ? "Playing" : "Paused"}</p>
+                <p className="text-sm text-primary-hover">Speed: {playbackRate}x</p>
+                <p className="text-sm text-primary-hover">
                   Time: {formatTime(currentTime)} / {formatTime(videoDuration)}
                 </p>
               </div>
 
               {/* Video Progress Bar */}
               <div
-                className="mt-2 mb-2 relative h-8 bg-gray-700 rounded overflow-hidden cursor-pointer"
+                className="mt-2 mb-2 relative h-8 bg-dark-panel rounded overflow-hidden cursor-pointer"
                 onClick={(e) => {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = e.clientX - rect.left;
@@ -425,7 +425,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                 {/* Background for loop region */}
                 {videoDuration > 0 && loopSettings.enabled && (
                   <div
-                    className="absolute top-0 h-full bg-gray-600"
+                    className="absolute top-0 h-full bg-dark-surface"
                     style={{
                       left: `${calculateProgress(loopSettings.startTime)}%`,
                       width: `${calculateProgress(loopSettings.endTime - loopSettings.startTime)}%`,
@@ -434,44 +434,42 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
 
                 {/* Progress bar */}
                 <div
-                  className="absolute top-0 left-0 h-full bg-blue-600 opacity-50"
+                  className="absolute top-0 left-0 h-full bg-secondary opacity-50"
                   style={{ width: `${calculateProgress(currentTime)}%` }}></div>
 
                 {/* Loop region indicator */}
                 {videoDuration > 0 && (
                   <div
-                    className={`absolute top-0 h-full ${loopSettings.enabled ? "bg-purple-600" : "bg-purple-600/30"}`}
+                    className={`absolute top-0 h-full ${loopSettings.enabled ? "bg-primary" : "bg-primary/30"} border-l-2 border-r-2 border-accent-lilac`}
                     style={{
                       left: `${calculateProgress(loopSettings.startTime)}%`,
                       width: `${calculateProgress(loopSettings.endTime - loopSettings.startTime)}%`,
                       opacity: loopSettings.enabled ? 0.5 : 0.3,
-                      borderLeft: "2px solid white",
-                      borderRight: "2px solid white",
                     }}></div>
                 )}
 
                 {/* Current time marker */}
                 <div
-                  className="absolute top-0 h-full w-0.5 bg-white"
+                  className="absolute top-0 h-full w-0.5 bg-accent-lilac"
                   style={{ left: `${calculateProgress(currentTime)}%` }}></div>
 
                 {/* Loop markers */}
                 {videoDuration > 0 && (
                   <>
                     <div
-                      className="absolute top-0 h-full w-1 bg-green-500"
-                      style={{ left: `${calculateProgress(loopSettings.startTime)}%`, opacity: 0.8 }}></div>
+                      className="absolute top-0 h-full w-1 bg-accent-pink opacity-80"
+                      style={{ left: `${calculateProgress(loopSettings.startTime)}%` }}></div>
                     <div
-                      className="absolute top-0 h-full w-1 bg-red-500"
-                      style={{ left: `${calculateProgress(loopSettings.endTime)}%`, opacity: 0.8 }}></div>
+                      className="absolute top-0 h-full w-1 bg-accent-highlight opacity-80"
+                      style={{ left: `${calculateProgress(loopSettings.endTime)}%` }}></div>
                   </>
                 )}
 
                 {/* Time labels */}
-                <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-between items-center px-2 text-xs text-white">
+                <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-between items-center px-2 text-xs text-accent-lilac">
                   <span>{formatTime(0)}</span>
                   {loopSettings.enabled && (
-                    <span className="bg-purple-800 px-1 py-0.5 rounded">
+                    <span className="bg-primary px-1 py-0.5 rounded">
                       Loop: {formatTime(loopSettings.endTime - loopSettings.startTime)}
                     </span>
                   )}
@@ -480,16 +478,16 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
-                <button onClick={togglePlay} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">
+                <button onClick={togglePlay} className="bg-secondary hover:bg-secondary-hover px-4 py-2 rounded transition-colors">
                   {isPlaying ? "Pause" : "Play"}
                 </button>
 
                 <div className="flex items-center">
-                  <span className="mr-2">Speed:</span>
+                  <span className="mr-2 text-primary-hover">Speed:</span>
                   <select
                     value={playbackRate}
                     onChange={(e) => changePlaybackRate(parseFloat(e.target.value))}
-                    className="bg-gray-700 rounded px-2 py-2">
+                    className="bg-dark-panel text-white rounded px-2 py-2">
                     {playbackRates.map((rate) => (
                       <option key={rate} value={rate}>
                         {rate}x
@@ -500,13 +498,13 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
               </div>
 
               {/* Loop Controls */}
-              <div className="mt-3 bg-gray-700 p-3 rounded">
+              <div className="mt-3 bg-dark-panel p-3 rounded">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-medium">Loop Controls</h3>
+                  <h3 className="font-medium text-primary-hover">Loop Controls</h3>
                   <button
                     onClick={toggleLoop}
-                    className={`px-3 py-1 rounded text-sm ${
-                      loopSettings.enabled ? "bg-purple-600 hover:bg-purple-700" : "bg-gray-600 hover:bg-gray-500"
+                    className={`px-3 py-1 rounded text-sm transition-colors ${
+                      loopSettings.enabled ? "bg-primary hover:bg-primary-hover" : "bg-dark-surface hover:bg-secondary"
                     }`}>
                     {loopSettings.enabled ? "Loop ON" : "Loop OFF"}
                   </button>
@@ -515,7 +513,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                 {/* Loop Range Sliders */}
                 <div className="mt-4 mb-2">
                   <div className="flex items-center mb-2">
-                    <span className="text-sm w-16">Start: </span>
+                    <span className="text-sm w-16 text-accent-lilac">Start: </span>
                     <button
                       onClick={() => {
                         const newTime = Math.max(0, loopSettings.startTime - 1);
@@ -525,7 +523,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                           enabled: true,
                         }, true, false);
                       }}
-                      className="ml-2 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      className="ml-2 bg-dark-surface hover:bg-secondary px-2 py-1 rounded text-xs transition-colors">
                       -1s
                     </button>
                     <button
@@ -537,7 +535,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                           enabled: true,
                         }, true, false);
                       }}
-                      className="ml-1 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      className="ml-1 bg-dark-surface hover:bg-secondary px-2 py-1 rounded text-xs transition-colors">
                       -0.1s
                     </button>
                     <input
@@ -547,7 +545,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                       step="0.1"
                       value={loopSettings.startTime}
                       onChange={handleStartSliderChange}
-                      className="flex-grow mx-2 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                      className="flex-grow mx-2 h-2 bg-dark-surface rounded-lg appearance-none cursor-pointer"
                     />
                     <button
                       onClick={() => {
@@ -558,7 +556,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                           enabled: true,
                         }, true, false);
                       }}
-                      className="mr-1 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      className="mr-1 bg-dark-surface hover:bg-secondary px-2 py-1 rounded text-xs transition-colors">
                       +0.1s
                     </button>
                     <button
@@ -570,14 +568,14 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                           enabled: true,
                         }, true, false);
                       }}
-                      className="mr-2 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      className="mr-2 bg-dark-surface hover:bg-secondary px-2 py-1 rounded text-xs transition-colors">
                       +1s
                     </button>
-                    <span className="text-sm w-16">{formatTime(loopSettings.startTime)}</span>
+                    <span className="text-sm w-16 text-primary-hover">{formatTime(loopSettings.startTime)}</span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="text-sm w-16">End: </span>
+                    <span className="text-sm w-16 text-accent-lilac">End: </span>
                     <button
                       onClick={() => {
                         const newTime = Math.max(loopSettings.startTime + 1, loopSettings.endTime - 1);
@@ -587,7 +585,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                           enabled: true,
                         }, false, true);
                       }}
-                      className="ml-2 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      className="ml-2 bg-dark-surface hover:bg-secondary px-2 py-1 rounded text-xs transition-colors">
                       -1s
                     </button>
                     <button
@@ -599,7 +597,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                           enabled: true,
                         }, false, true);
                       }}
-                      className="ml-1 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      className="ml-1 bg-dark-surface hover:bg-secondary px-2 py-1 rounded text-xs transition-colors">
                       -0.1s
                     </button>
                     <input
@@ -609,7 +607,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                       step="0.1"
                       value={loopSettings.endTime}
                       onChange={handleEndSliderChange}
-                      className="flex-grow mx-2 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer"
+                      className="flex-grow mx-2 h-2 bg-dark-surface rounded-lg appearance-none cursor-pointer"
                     />
                     <button
                       onClick={() => {
@@ -620,7 +618,7 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                           enabled: true,
                         }, false, true);
                       }}
-                      className="mr-1 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      className="mr-1 bg-dark-surface hover:bg-secondary px-2 py-1 rounded text-xs transition-colors">
                       +0.1s
                     </button>
                     <button
@@ -632,15 +630,15 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
                           enabled: true,
                         }, false, true);
                       }}
-                      className="mr-2 bg-gray-600 hover:bg-gray-500 px-2 py-1 rounded text-xs">
+                      className="mr-2 bg-dark-surface hover:bg-secondary px-2 py-1 rounded text-xs transition-colors">
                       +1s
                     </button>
-                    <span className="text-sm w-16">{formatTime(loopSettings.endTime)}</span>
+                    <span className="text-sm w-16 text-primary-hover">{formatTime(loopSettings.endTime)}</span>
                   </div>
                 </div>
 
                 {loopSettings.enabled && (
-                  <div className="mt-2 text-xs text-gray-300">
+                  <div className="mt-2 text-xs text-accent-lilac">
                     Looping from {formatTime(loopSettings.startTime)} to {formatTime(loopSettings.endTime)}
                   </div>
                 )}
@@ -651,18 +649,18 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* URL/ID Input */}
             <form onSubmit={handleVideoChange} className="flex flex-col gap-2">
-              <div className="text-sm font-medium mb-1">Change by URL or ID:</div>
+              <div className="text-sm font-medium mb-1 text-accent-lilac">Change by URL or ID:</div>
               <div className="flex flex-row gap-2">
                 <input
                   type="text"
                   value={newVideoUrl}
                   onChange={(e) => setNewVideoUrl(e.target.value)}
                   placeholder="YouTube URL or video ID"
-                  className="flex-grow px-3 py-2 bg-gray-700 rounded text-white"
+                  className="flex-grow px-3 py-2 bg-dark-panel rounded text-white placeholder-primary-hover"
                 />
                 <button
                   type="submit"
-                  className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded whitespace-nowrap disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="bg-accent-pink hover:bg-accent-highlight px-4 py-2 rounded whitespace-nowrap disabled:bg-dark-surface disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                   disabled={!newVideoUrl.trim()}>
                   Change
                 </button>
@@ -671,18 +669,18 @@ const VideoControls = ({ videoId, index, onVideoIdChange, onTitleChange }: Video
 
             {/* Keyword Search */}
             <form onSubmit={handleKeywordSearch} className="flex flex-col gap-2">
-              <div className="text-sm font-medium mb-1">Random video by keyword:</div>
+              <div className="text-sm font-medium mb-1 text-accent-lilac">Random video by keyword:</div>
               <div className="flex flex-row gap-2">
                 <input
                   type="text"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
                   placeholder="Enter keyword to search"
-                  className="flex-grow px-3 py-2 bg-gray-700 rounded text-white"
+                  className="flex-grow px-3 py-2 bg-dark-panel rounded text-white placeholder-primary-hover"
                 />
                 <button
                   type="submit"
-                  className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded whitespace-nowrap disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="bg-primary hover:bg-primary-hover px-4 py-2 rounded whitespace-nowrap disabled:bg-dark-surface disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
                   disabled={isSearching || !searchKeyword.trim()}>
                   {isSearching ? "Searching..." : "Random"}
                 </button>

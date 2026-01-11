@@ -9,7 +9,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #090617;
     --foreground: #ededed;
   }
 }
@@ -18,4 +18,48 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-track {
+  background: linear-gradient(to right, #8F7CFF 0%, #8F7CFF var(--range-progress), #14172B var(--range-progress), #14172B 100%);
+  border-radius: 0.5rem;
+  height: 0.5rem;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: #C6B7FF;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #8F7CFF;
+}
+
+input[type="range"]::-moz-range-track {
+  background: #14172B;
+  border-radius: 0.5rem;
+  height: 0.5rem;
+}
+
+input[type="range"]::-moz-range-progress {
+  background: #8F7CFF;
+  border-radius: 0.5rem;
+  height: 0.5rem;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  background: #C6B7FF;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #8F7CFF;
 }
