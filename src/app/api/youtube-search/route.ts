@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+export const runtime = 'edge';
+
 // This is a simplified YouTube search API
 // In a production app, you would use the YouTube Data API with your API key
 export async function GET(request: Request) {
